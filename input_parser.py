@@ -21,3 +21,12 @@ def parse_showme(inputstr):
         return "No spawns left for today"
     else:
         return result
+
+
+# def parse_enhancement_sim(inputstr):
+#     sanitizedstr = sanitizer.sanitize(double)
+#     check_for_validity_and_convert_to_double(sanitizedstr)
+
+#     enhancer_module.enhancement_sim_function(doubleprobability) returns a success/failstring
+
+#     return above string
