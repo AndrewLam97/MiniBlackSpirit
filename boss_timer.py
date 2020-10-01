@@ -23,7 +23,7 @@ def convert_day(now):
 
 #Returns time from now till x in format 00:00
 def minute_delta(x, now):
-    return '{:02d}:{:02d}'.format(*divmod(x-convert_minutes(now), 60))
+    return '{:02d}h : {:02d}m'.format(*divmod(x-convert_minutes(now), 60))
 
 #Valid boss
 def valid_boss(inputstr):
