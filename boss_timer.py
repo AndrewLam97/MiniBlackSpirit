@@ -11,13 +11,16 @@ schedule = [
     {0:"Karanda/Kzarka", 195:"NONE", 255:"NONE", 315:"Nouver/Kutum", 420:"Kzarka", 600:"Kutum", 840:"Nouver", 1020:"Kzarka", 1260:"Vell"}
 ]
 
+#get and refresh datetime object
 def get_current_time():
     now = datetime.datetime.now(datetime.timezone.utc)
     return now
-    
+
+#converts current datetime object to minutes
 def convert_minutes(now):
     return (now.hour * 60) + now.minute
 
+#get weekday integer from datetime object
 def convert_day(now):
     return now.weekday()
 
@@ -25,7 +28,7 @@ def convert_day(now):
 def minute_delta(x, now):
     return '{:02d}h : {:02d}m'.format(*divmod(x-convert_minutes(now), 60))
 
-#Valid boss
+#Valid boss string
 def valid_boss(inputstr):
     return inputstr.upper() in ["KZARKA", "KARANDA", "OFFIN", "KUTUM", "NOUVER", "GARMOTH", "QUINT", "MURAKA", "VELL"]
 
@@ -55,10 +58,4 @@ def showme(inputstr):
     spawntimes = [spawntime for spawntime, bossname in schedule[day].items() if inputstr in bossname.upper() and spawntime >= convert_minutes(now)]
 
     print(spawntimes) #TODO: convert to human readable format
-    return spawntimes 
-
-
-
-#!showme kzarka
-#
-#kzarka -> KZARKA 
+    return spawntimes
