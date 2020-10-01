@@ -2,6 +2,9 @@ import settings
 import discord
 import os
 
+import input_parser
+import sanitizer
+
 client = discord.Client()
 
 print("Logging in...")
@@ -13,10 +16,15 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
+
+    if message.content == '$next':
+        await message.channel.send(input_parser.parse(message.content))
     
-    if message.content.startswith('$test'):
-        await message.channel.send('Test Successful')
-        print(">Test successful")
+    if message.content == '$test':
+        await message.channel.send(input_parser.parse(message.content))
+
+    if message.content.startswith('$showme'):
+        await message.channel.send(input_parser.parse_showme(message.content))
 
     print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
 
