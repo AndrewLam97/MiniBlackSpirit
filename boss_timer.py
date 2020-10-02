@@ -37,25 +37,61 @@ def next_boss():
     now = get_current_time()
     day = convert_day(now)
 
-    for x in schedule[day].keys():
-        if(convert_minutes(now) <= x):
-            return schedule[day].get(x) 
+    if(convert_minutes(now) > 1260):
+        now.day += 1
+        if(day > 6):
+            day = 0
+        now.hour -= 21
+        for x in schedule[day].keys():
+            if(convert_minutes(now) <= x):
+                return schedule[day].get(x)
+
+    else:
+        for x in schedule[day].keys():
+            if(convert_minutes(now) <= x):
+                return schedule[day].get(x) 
 
 #Returns string containing time till upcoming boss
 def till_next_boss():
     now = get_current_time()
     day = convert_day(now)
 
-    for x in schedule[day].keys():
-        if(convert_minutes(now) <= x): 
-            return schedule[day].get(x) + " in " + minute_delta(x, now)
+    if(convert_minutes(now) > 1260):
+        nextday = now - datetime.timedelta(seconds = 63000)
+        day = day + 1
+        if(day > 6):
+            day = 0
+        for x in schedule[day].keys():
+            if(convert_minutes(nextday) <= x):
+                return schedule[day].get(x) + " in " + minute_delta(x, now)
+
+    else:
+        for x in schedule[day].keys():
+            if(convert_minutes(now) <= x):
+                return schedule[day].get(x) + " in " + minute_delta(x, now) 
+
+    # for x in schedule[day].keys():
+    #     if(convert_minutes(now) <= x): 
+    #         return schedule[day].get(x) + " in " + minute_delta(x, now)
 
 #Returns list of times input string boss spawns
 def showme(inputstr):
     now = get_current_time()
     day = convert_day(now)
 
-    spawntimes = [spawntime for spawntime, bossname in schedule[day].items() if inputstr in bossname.upper() and spawntime >= convert_minutes(now)]
+    spawntimes=[]
+
+    for spawntime in schedule[day]:
+        if inputstr in schedule[day][spawntime].upper() and spawntime >= convert_minutes(now):
+            spawntimes.append(spawntime)
+    nextday = day + 1
+    if(nextday > 6):
+        nextday = 0
+    for spawntime in schedule[nextday]:
+        if inputstr in schedule[nextday][spawntime].upper() and spawntime < convert_minutes(now):
+            spawntimes.append(spawntime)
+
+    #spawntimes = [spawntime for spawntime, bossname in schedule[day].items() if inputstr in bossname.upper() and spawntime >= convert_minutes(now)]
 
     print(spawntimes) #TODO: convert to human readable format
     return spawntimes
