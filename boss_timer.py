@@ -110,10 +110,8 @@ def convert_read(spawntime):
     else:
         now = spawntime - 480
     if spawntime >= 720:
-        PST_hour = (now) // 60
-        PST_min = (now) % 60
-        if PST_min < 10:
-            PST_min = str(PST_min).zfill(2)
+        PST_hour = now // 60
+        PST_min = str(now % 60).zfill(2)
         if PST_hour >= 12:
             if PST_hour > 12:
                 PST_hour -= 12
@@ -122,9 +120,7 @@ def convert_read(spawntime):
             return "{}:{}AM".format(PST_hour, PST_min)
     else:
         PST_hour = (now + 720) // 60
-        PST_min = (now + 720) % 60
-        if PST_min < 10:
-            PST_min = str(PST_min).zfill(2)
+        PST_min = str((now + 720) % 60).zfill(2)
         if PST_hour >= 12:
             if PST_hour > 12:
                 PST_hour -= 12
