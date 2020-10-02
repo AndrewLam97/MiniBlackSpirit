@@ -64,7 +64,7 @@ def till_next_boss():
             day = 0
         for x in schedule[day].keys():
             if(convert_minutes(nextday) <= x):
-                return schedule[day].get(x) + " in " + minute_delta(x, now)
+                return schedule[day].get(x) + " in " + minute_delta(x, nextday)
 
     else:
         for x in schedule[day].keys():
