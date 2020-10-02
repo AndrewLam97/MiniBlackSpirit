@@ -21,13 +21,16 @@ async def on_message(message):
         await message.channel.send(input_parser.parse(message.content))
 
     if message.content == '$help':
-        await message.channel.send("$next displays the upcoming boss \n$showme boss_name displays all upcoming instances of the specified boss")
+        await message.channel.send("$next displays the upcoming boss. \n$showme boss_name displays all upcoming instances of the specified boss.")
     
     if message.content == '$test':
         await message.channel.send(input_parser.parse(message.content))
 
     if message.content.startswith('$showme'):
         await message.channel.send(input_parser.parse_showme(message.content))
+
+    if message.content.startswith('$enhance'):
+        await message.channel.send(input_parser.parse_enhancement_sim(message.content))
 
     print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
 

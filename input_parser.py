@@ -1,6 +1,7 @@
 #Parses message.content
 import boss_timer
 import sanitizer
+import enhancer
 
 #Handles $test and $next
 def parse(inputstr):
@@ -16,17 +17,18 @@ def parse_showme(inputstr):
     result = boss_timer.showme(sanitizedstr)
 
     if not boss_timer.valid_boss(sanitizedstr):
-        return "Couldn't find boss, check spelling"
+        return "Couldn't find boss, check spelling."
     if not result:
-        return "No spawns left for today"
+        return "No spawns in the next 24 hours."
     else:
         return result
 
+def parse_enhancement_sim(inputstr):
+    sanitizedstr = sanitizer.sanitize(inputstr)
+    try:
+        sanitizedfloat = float(sanitizedstr)
+    except:
+        print("Error during string to float conversion")
+        return "Please enter a valid number."
 
-# def parse_enhancement_sim(inputstr):
-#     sanitizedstr = sanitizer.sanitize(double)
-#     check_for_validity_and_convert_to_double(sanitizedstr)
-
-#     enhancer_module.enhancement_sim_function(doubleprobability) returns a success/failstring
-
-#     return above string
+    return enhancer.enhancement_sim(sanitizedfloat)
