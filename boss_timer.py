@@ -79,7 +79,6 @@ def till_next_boss():
 def showme(inputstr):
     now = get_current_time()
     day = convert_day(now)
-
     spawntimes=[]
 
     for spawntime in schedule[day]:
@@ -92,10 +91,12 @@ def showme(inputstr):
         if inputstr in schedule[nextday][spawntime].upper() and spawntime < convert_minutes(now):
             spawntimes.append(spawntime)
 
-    #spawntimes = [spawntime for spawntime, bossname in schedule[day].items() if inputstr in bossname.upper() and spawntime >= convert_minutes(now)]
+    strspawntimes = ""
+    for x in spawntimes:
+        strspawntimes = strspawntimes + convert_read(x) + " "
 
-    print(spawntimes) #TODO: convert to human readable format
-    return spawntimes
+    print(strspawntimes)
+    return strspawntimes
 
 #Check if it is daylight savings time 
 def is_dst(zonename):
