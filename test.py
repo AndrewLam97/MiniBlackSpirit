@@ -54,7 +54,7 @@ def showme(inputstr):
     now = get_current_time()
     day = convert_day(now)
 
-    spawntimes = [spawntime for spawntime, bossname in schedule[day].items() if inputstr in bossname.upper() and spawntime >= convert_minutes(now)]
+    spawntimes = [convert_read(spawntime) for spawntime, bossname in schedule[day].items() if inputstr in bossname.upper() and spawntime >= convert_minutes(now)]
 
     print(spawntimes)
     return spawntimes 
