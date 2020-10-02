@@ -95,7 +95,6 @@ def showme(inputstr):
     for x in spawntimes:
         strspawntimes = strspawntimes + convert_read(x) + " "
 
-    print(strspawntimes)
     return strspawntimes
 
 #Check if it is daylight savings time 
@@ -115,8 +114,9 @@ def convert_read(spawntime):
         PST_min = (now) % 60
         if PST_min < 10:
             PST_min = str(PST_min).zfill(2)
-        if PST_hour > 12:
-            PST_hour -= 12
+        if PST_hour >= 12:
+            if PST_hour > 12:
+                PST_hour -= 12
             return "{}:{}PM".format(PST_hour, PST_min)
         else:
             return "{}:{}AM".format(PST_hour, PST_min)
@@ -125,8 +125,9 @@ def convert_read(spawntime):
         PST_min = (now + 720) % 60
         if PST_min < 10:
             PST_min = str(PST_min).zfill(2)
-        if PST_hour > 12:
-            PST_hour -= 12
+        if PST_hour >= 12:
+            if PST_hour > 12:
+                PST_hour -= 12
             return "{}:{}AM".format(PST_hour, PST_min)
         else:
             return "{}:{}PM".format(PST_hour, PST_min)
