@@ -354,3 +354,4 @@ bot-env/*
 
 .vscode/launch.json
 .vscode/settings.json
+test.py
