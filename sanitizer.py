@@ -1,4 +1,4 @@
-#Sanitizes inputs
+#Sanitizes inputs and TOUPPER
 def sanitize(inputstr):
     return remove_command(inputstr).upper()
 
