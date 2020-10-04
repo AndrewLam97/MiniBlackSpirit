@@ -110,7 +110,7 @@ def convert_read(spawntime):
     else:
         now = spawntime - 480
     if spawntime < 0:
-            print("You can't travel back in time!")
+            return("You can't travel back in time!")
     elif spawntime >= 720:
         if spawntime >= 1860:
             now = now % 1440
