@@ -109,7 +109,11 @@ def convert_read(spawntime):
         now = spawntime - 420
     else:
         now = spawntime - 480
-    if spawntime >= 720:
+    if spawntime < 0:
+            print("You can't travel back in time!")
+    elif spawntime >= 720:
+        if spawntime >= 1860:
+            now = now % 1440
         PST_hour = now // 60
         PST_min = str(now % 60).zfill(2)
         if PST_hour >= 12:
@@ -117,6 +121,8 @@ def convert_read(spawntime):
                 PST_hour -= 12
             return "{}:{}PM".format(PST_hour, PST_min)
         else:
+            if PST_hour == 0:
+                PST_hour += 12
             return "{}:{}AM".format(PST_hour, PST_min)
     else:
         PST_hour = (now + 720) // 60
