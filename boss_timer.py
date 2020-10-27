@@ -105,22 +105,22 @@ def is_dst(zonename):
 
 #Converts to human readable format
 def convert_read(spawntime):
+    if spawntime < 0:
+        return("You can't travel back in time!")
     if is_dst("America/Los_Angeles"):
         now = spawntime - 420
     else:
         now = spawntime - 480
-    if spawntime < 0:
-        return("You can't travel back in time!")
-    if spawntime >= 1860:
-        now = now % 1440
-    PST = now + 720
-    PST_hour = PST // 60
-    PST_min = str(PST % 60).zfill(2)
-    if PST > 720 and PST <= 1440:
-        PST_hour -= 12
-    if PST >= 720 and PST < 1440:
+    if now < 0:
+        now = now + 1440
+    now = now % 1440
+    PST_hour = now // 60
+    PST_min = str(now % 60).zfill(2)
+    if now < 720:
+        if now == 0:
+            PST_hour = 12
         return "{}:{}AM".format(PST_hour, PST_min)
     else:
-        if PST > 1440:
-            PST_hour -= 24
+        if now > 720:
+            PST_hour -= 12
         return "{}:{}PM".format(PST_hour, PST_min)
