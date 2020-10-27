@@ -107,12 +107,17 @@ def is_dst(zonename):
 def convert_read(spawntime):
     if spawntime < 0:
         return("You can't travel back in time!")
+
+    #check if DST and convert UTC minutes to PTC minutes
     if is_dst("America/Los_Angeles"):
         now = spawntime - 420
     else:
         now = spawntime - 480
+
+    #prevent negative PST time by adding another 24 hours
     if now < 0:
         now = now + 1440
+
     now = now % 1440
     PST_hour = now // 60
     PST_min = str(now % 60).zfill(2)
