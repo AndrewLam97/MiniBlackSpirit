@@ -79,7 +79,6 @@ def till_next_boss():
 def showme(inputstr):
     now = get_current_time()
     day = convert_day(now)
-
     spawntimes=[]
 
     for spawntime in schedule[day]:
@@ -92,10 +91,11 @@ def showme(inputstr):
         if inputstr in schedule[nextday][spawntime].upper() and spawntime < convert_minutes(now):
             spawntimes.append(spawntime)
 
-    #spawntimes = [spawntime for spawntime, bossname in schedule[day].items() if inputstr in bossname.upper() and spawntime >= convert_minutes(now)]
+    strspawntimes = ""
+    for x in spawntimes:
+        strspawntimes = strspawntimes + convert_read(x) + " "
 
-    print(spawntimes) #TODO: convert to human readable format
-    return spawntimes
+    return strspawntimes
 
 #Check if it is daylight savings time 
 def is_dst(zonename):
@@ -105,27 +105,27 @@ def is_dst(zonename):
 
 #Converts to human readable format
 def convert_read(spawntime):
-    if is_dst("America/Los_Angeles") == True:
+    if spawntime < 0:
+        return("You can't travel back in time!")
+
+    #check if DST and convert UTC minutes to PTC minutes
+    if is_dst("America/Los_Angeles"):
         now = spawntime - 420
     else:
         now = spawntime - 480
-    if spawntime >= 720:
-        PST_hour = (now) // 60
-        PST_min = (now) % 60
-        if PST_min < 10:
-            PST_min = str(PST_min).zfill(2)
-        if PST_hour > 12:
-            PST_hour -= 12
-            return "{}:{}PM".format(PST_hour, PST_min)
-        else:
-            return "{}:{}AM".format(PST_hour, PST_min)
+
+    #prevent negative PST time by adding another 24 hours
+    if now < 0:
+        now = now + 1440
+
+    now = now % 1440
+    PST_hour = now // 60
+    PST_min = str(now % 60).zfill(2)
+    if now < 720:
+        if now == 0:
+            PST_hour = 12
+        return "{}:{}AM".format(PST_hour, PST_min)
     else:
-        PST_hour = (now + 720) // 60
-        PST_min = (now + 720) % 60
-        if PST_min < 10:
-            PST_min = str(PST_min).zfill(2)
-        if PST_hour > 12:
+        if now > 720:
             PST_hour -= 12
-            return "{}:{}AM".format(PST_hour, PST_min)
-        else:
-            return "{}:{}PM".format(PST_hour, PST_min)
+        return "{}:{}PM".format(PST_hour, PST_min)
