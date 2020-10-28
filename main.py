@@ -1,11 +1,16 @@
 import settings
 import discord
 import os
+import sched
+import asyncio
+import time
 
 import input_parser
 import sanitizer
 
 client = discord.Client()
+
+ = 
 
 print("Logging in...")
 @client.event
@@ -34,4 +39,26 @@ async def on_message(message):
 
     print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
 
+async def my_background_task():
+    await client.wait_until_ready()
+    
+    # failstacking channel
+    channel_id = 761151710097571862
+
+    channel = client.get_channel(channel_id)
+
+    while not client.is_closed():
+        
+        await channel.send('Deez Nuts')
+        await asyncio.sleep(5)
+
+    # while not client.is_closed():
+    #     counter += 1
+    #     s = sched.scheduler(time.perf_counter, asyncio.sleep)
+    #     args = (channel.send(counter), )
+    #     s.enter(5, 1, client.loop.create_task, args)
+    #     s.run()
+    #     await 
+
+client.loop.create_task(my_background_task())
 client.run(settings.DISCORD_TOKEN)
