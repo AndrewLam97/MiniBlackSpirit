@@ -1,6 +1,8 @@
 import datetime
 import pytz
 
+from asgiref.sync import sync_to_async, async_to_sync
+
 #list of dictionaries
 schedule = [
     {0:"Garmoth", 195:"Kzarka/Nouver", 255:"NONE", 315:"Karanda/Kutum", 420:"Karanda", 600:"Kzarka", 840:"Kzarka", 1020:"Offin", 1260:"Kutum"},
@@ -74,6 +76,14 @@ def till_next_boss():
     # for x in schedule[day].keys():
     #     if(convert_minutes(now) <= x): 
     #         return schedule[day].get(x) + " in " + minute_delta(x, now)
+
+#Returns list [next boss, remaining hour(s), remaining minute(s)]
+@sync_to_async
+def till_next_boss_async():
+    till_next_boss_str = till_next_boss()
+    t_hr = int(''.join(c for c in till_next_boss_str.split()[2] if c.isdigit()))
+    t_min = int(''.join(c for c in till_next_boss_str.split()[4] if c.isdigit()))
+    return [till_next_boss_str.split()[0], t_hr, t_min]
 
 #Returns list of times input string boss spawns
 def showme(inputstr):
