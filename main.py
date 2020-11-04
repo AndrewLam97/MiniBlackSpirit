@@ -23,6 +23,9 @@ async def on_message(message):
     if message.content == '$help':
         await message.channel.send("$next displays the upcoming boss. \n$showme boss_name displays all upcoming instances of the specified boss.")
     
+    if message.content == '$schedule':
+        await message.channel.send(input_parser.parse(message.content))
+
     if message.content == '$test':
         await message.channel.send(input_parser.parse(message.content))
 

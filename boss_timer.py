@@ -137,6 +137,7 @@ def print_schedule():
 
     day_schedule = []
 
+    #Grab entries from the dictionary that are within 24 hours of current time
     for x in schedule[day].keys():
         if(x >= convert_minutes(now)):
             pair = (x, schedule[day].get(x))
@@ -151,15 +152,8 @@ def print_schedule():
 
     strschedule = ""
 
+    #Create schedule string and adds each time and boss in order
     for a, b in day_schedule:
         strschedule += '{} {}\n'.format(convert_read(a), b)
 
-    return strschedule
-
-
-
-    
-    
-
-    
-    
+    return strschedule    
