@@ -129,3 +129,37 @@ def convert_read(spawntime):
         if now > 720:
             PST_hour -= 12
         return "{}:{}PM".format(PST_hour, PST_min)
+
+#Prints out upcoming bosses for next 24 hours
+def print_schedule():
+    now = get_current_time()
+    day = convert_day(now)
+
+    day_schedule = []
+
+    for x in schedule[day].keys():
+        if(x >= convert_minutes(now)):
+            pair = (x, schedule[day].get(x))
+            day_schedule.append(pair)
+    day += 1
+    if(day > 6):
+        day = 0
+    for x in schedule[day].keys():
+        if(x <= convert_minutes(now)):
+            pair = (x, schedule[day].get(x))
+            day_schedule.append(pair)
+
+    strschedule = ""
+
+    for a, b in day_schedule:
+        strschedule += '{} {}\n'.format(convert_read(a), b)
+
+    return strschedule
+
+
+
+    
+    
+
+    
+    
