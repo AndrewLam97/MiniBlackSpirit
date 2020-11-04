@@ -3,10 +3,12 @@ import boss_timer
 import sanitizer
 import enhancer
 
-#Handles $test and $next
+#Handles $test, $next, and $schedule
 def parse(inputstr):
     if inputstr == '$next':
         return boss_timer.till_next_boss()
+    if inputstr == '$schedule':
+        return boss_timer.print_schedule()
     if inputstr == '$test':
         return "Test Successful"
 

@@ -5,13 +5,13 @@ from asgiref.sync import sync_to_async, async_to_sync
 
 #list of dictionaries
 schedule = [
-    {0:"Garmoth", 195:"Kzarka/Nouver", 255:"NONE", 315:"Karanda/Kutum", 420:"Karanda", 600:"Kzarka", 840:"Kzarka", 1020:"Offin", 1260:"Kutum"},
-    {0:"Nouver", 195:"Kzarka", 255:"NONE", 315:"Karanda", 420:"Kutum", 600:"Kzarka", 840:"Nouver", 1020:"Kutum", 1260:"Nouver"},
-    {0:"Karanda", 195:"Garmoth", 255:"NONE", 315:"Kzarka/Kutum", 420:"Karanda", 600:"NONE", 840:"Karanda", 1020:"Nouver", 1260:"Kutum/Offin"},
-    {0:"Vell", 195:"Karanda/Kzarka", 255:"Quint/Muraka", 315:"Nouver", 420:"Kutum", 600:"Kzarka", 840:"Kutum", 1020:"Nouver", 1260:"Kzarka"},
-    {0:"Kutum", 195:"Garmoth", 255:"NONE", 315:"Karanda/Kzarka", 420:"Nouver", 600:"Karanda", 840:"Kutum", 1020:"Karanda", 1260:"Nouver"},
-    {0:"Kzarka", 195:"Kzarka/Kutum", 255:"NONE", 315:"Karanda", 420:"Offin", 600:"Nouver", 840:"Kutum", 1020:"Nouver", 1260:"Quint/Muraka"},
-    {0:"Karanda/Kzarka", 195:"NONE", 255:"NONE", 315:"Nouver/Kutum", 420:"Kzarka", 600:"Kutum", 840:"Nouver", 1020:"Kzarka", 1260:"Vell"}
+    {60:"Garmoth", 255:"Kzarka/Nouver", 315:"NONE", 375:"Karanda/Kutum", 480:"Karanda", 660:"Kzarka", 900:"Kzarka", 1080:"Offin", 1320:"Kutum"},
+    {60:"Nouver", 255:"Kzarka", 315:"NONE", 375:"Karanda", 480:"Kutum", 660:"Kzarka", 900:"Nouver", 1080:"Kutum", 1320:"Nouver"},
+    {60:"Karanda", 255:"Garmoth", 315:"NONE", 375:"Kzarka/Kutum", 480:"Karanda", 660:"NONE", 900:"Karanda", 1080:"Nouver", 1320:"Kutum/Offin"},
+    {60:"Vell", 255:"Karanda/Kzarka", 315:"Quint/Muraka", 315:"Nouver", 480:"Kutum", 660:"Kzarka", 900:"Kutum", 1080:"Nouver", 1320:"Kzarka"},
+    {60:"Kutum", 255:"Garmoth", 315:"NONE", 375:"Karanda/Kzarka", 480:"Nouver", 660:"Karanda", 900:"Kutum", 1080:"Karanda", 1320:"Nouver"},
+    {60:"Kzarka", 255:"Kzarka/Kutum", 315:"NONE", 375:"Karanda", 480:"Offin", 660:"Nouver", 900:"Kutum", 1080:"Nouver", 1320:"Quint/Muraka"},
+    {60:"Karanda/Kzarka", 255:"NONE", 315:"NONE", 375:"Nouver/Kutum", 480:"Kzarka", 660:"Kutum", 900:"Nouver", 1080:"Kzarka", 1320:"Vell"}
 ]
 
 #get and refresh datetime object
@@ -40,11 +40,11 @@ def next_boss():
     now = get_current_time()
     day = convert_day(now)
 
-    if(convert_minutes(now) > 1260):
+    if(convert_minutes(now) > 1320):
         now.day += 1
         if(day > 6):
             day = 0
-        now.hour -= 21
+        now.hour -= 22
         for x in schedule[day].keys():
             if(convert_minutes(now) <= x):
                 return schedule[day].get(x)
@@ -57,25 +57,34 @@ def next_boss():
 #Returns string containing time till upcoming boss
 def till_next_boss():
     now = get_current_time()
-    day = convert_day(now)
 
-    if(convert_minutes(now) > 1260):
-        nextday = now - datetime.timedelta(seconds = 63000)
-        day = day + 1
-        if(day > 6):
-            day = 0
-        for x in schedule[day].keys():
-            if(convert_minutes(nextday) <= x):
-                return schedule[day].get(x) + " in " + minute_delta(x, nextday)
+    weekday = convert_day(now)
+
+    if(convert_minutes(now) > 1320):
+        weekday = weekday + 1
+        if(weekday > 6):
+            weekday = 0
+
+        next_spawn = get_current_time() #create datetime object
+        next_spawn = next_spawn + datetime.timedelta(days = 1) #increment to next day
+        next_list = list(schedule[0].keys()) #create list containing all available spawn times
+        next_hour = 0
+        if(next_list[0]>=60): #if first spawn time for the day is greater than 1 hour, replace doesn't handle greater than 59 minutes
+            next_hour += next_list[0] // 60
+        next_minute = next_list[0] % 60
+        
+        next_spawn = next_spawn.replace(hour = next_hour, minute = next_minute) #datetime object containing next day's first spawn
+        
+        tdseconds = next_spawn - now #timedelta object containing difference between tomorrow's first spawn and now
+
+        tdminutes = tdseconds.total_seconds() // 60
+
+        return schedule[weekday][next_list[0]] + " in " + '{:02d}h : {:02d}m'.format(*divmod(int(tdminutes), 60)) #get tomorrow's dictionary's first value
 
     else:
-        for x in schedule[day].keys():
+        for x in schedule[weekday].keys():
             if(convert_minutes(now) <= x):
-                return schedule[day].get(x) + " in " + minute_delta(x, now) 
-
-    # for x in schedule[day].keys():
-    #     if(convert_minutes(now) <= x): 
-    #         return schedule[day].get(x) + " in " + minute_delta(x, now)
+                return schedule[weekday].get(x) + " in " + minute_delta(x, now) 
 
 #Returns list [next boss, remaining hour(s), remaining minute(s)]
 @sync_to_async
@@ -139,3 +148,31 @@ def convert_read(spawntime):
         if now > 720:
             PST_hour -= 12
         return "{}:{}PM".format(PST_hour, PST_min)
+
+#Prints out upcoming bosses for next 24 hours
+def print_schedule():
+    now = get_current_time()
+    day = convert_day(now)
+
+    day_schedule = []
+
+    #Grab entries from the dictionary that are within 24 hours of current time
+    for x in schedule[day].keys():
+        if(x >= convert_minutes(now)):
+            pair = (x, schedule[day].get(x))
+            day_schedule.append(pair)
+    day += 1
+    if(day > 6):
+        day = 0
+    for x in schedule[day].keys():
+        if(x <= convert_minutes(now)):
+            pair = (x, schedule[day].get(x))
+            day_schedule.append(pair)
+
+    strschedule = ""
+
+    #Create schedule string and adds each time and boss in order
+    for a, b in day_schedule:
+        strschedule += '{} {}\n'.format(convert_read(a), b)
+
+    return strschedule    
