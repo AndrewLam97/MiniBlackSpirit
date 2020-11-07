@@ -90,9 +90,10 @@ def till_next_boss():
 @sync_to_async
 def till_next_boss_async():
     till_next_boss_str = till_next_boss()
+    boss_name = till_next_boss_str.split()[0]
     t_hr = int(''.join(c for c in till_next_boss_str.split()[2] if c.isdigit()))
     t_min = int(''.join(c for c in till_next_boss_str.split()[4] if c.isdigit()))
-    return [till_next_boss_str.split()[0], t_hr, t_min]
+    return [boss_name, t_hr, t_min]
 
 #Returns list of times input string boss spawns
 def showme(inputstr):
