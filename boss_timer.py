@@ -36,7 +36,7 @@ def valid_boss(inputstr):
     return inputstr.upper() in ["KZARKA", "KARANDA", "OFFIN", "KUTUM", "NOUVER", "GARMOTH", "QUINT", "MURAKA", "VELL"]
 
 #Returns upcoming boss as string
-def next_boss(): 
+def next_boss():
     now = get_current_time()
     day = convert_day(now)
 

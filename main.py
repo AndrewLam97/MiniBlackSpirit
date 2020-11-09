@@ -45,16 +45,17 @@ async def on_message(message):
 
     print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
 
-@loop(seconds=1)
+@loop(seconds=30.0, reconnect=True)
 async def poll_boss_time():
     remaining_time = await boss_timer.till_next_boss_async()
+    remaining_time[1] = 0
 
     # Gracefully stops current tasks that aren't supposed to be running at certain time intervals
-    if remaining_time[1] == 0 and remaining_time[2] < 15 and alert_hour.is_running():
+    if remaining_time[1] == 0 and remaining_time[2] <= 15 and alert_hour.is_running():
         alert_hour.stop()
-    elif remaining_time[1] == 0 and remaining_time[2] < 2  and alert_min.is_running():
+    if remaining_time[1] == 0 and remaining_time[2] <= 1 and alert_min.is_running():
         alert_min.stop()
-    elif remaining_time[1] == 0 and remaining_time[2] < 1 and alert_sec.is_running():
+    if remaining_time[1] == 0 and remaining_time[2] < 1 and alert_sec.is_running():
         alert_sec.stop()
 
     # Run boss timer alerts
@@ -62,21 +63,21 @@ async def poll_boss_time():
         if alert_sec.is_running():
             alert_sec.cancel()  # forcefully stop if it has not been stopped yet
         alert_hour.start()      # runs at most two times, between 60 and 30 minutes remaining
-    elif remaining_time[1] == 0 and remaining_time[2] <= 15 and remaining_time[2] > 1 and not alert_min.is_running():
+    elif remaining_time[1] == 0 and remaining_time[2] <= 15 and remaining_time[2] > 5 and not alert_min.is_running():
         if alert_hour.is_running():
             alert_hour.cancel()
         alert_min.start()       # runs at most three times, between 15 and 2 minutes remaining
-    elif remaining_time[1] == 0 and remaining_time[2] == 1 and not alert_sec.is_running():
+    elif remaining_time[1] == 0 and remaining_time[2] <= 1 and not alert_sec.is_running():
         if alert_min.is_running():
             alert_min.cancel()
-        alert_sec.start()  # runs once on last minute, but needs to be on a separate function with count=1 to prevent spamming (poll_boss_time() runs every second)
+        alert_sec.start()       # runs once on the last minute, interval must be over 1 minute (current minutes=5.0) so prevent spamming at the last minute
 
 @poll_boss_time.before_loop
 async def before_poll_boss_time():
     print('Waiting until client is ready before running boss timer scheduler...')
     await client.wait_until_ready()
 
-@loop(minutes=30, count=2)
+@loop(minutes=30.0, count=2, reconnect=True)
 async def alert_hour():
     get_boss_time = await boss_timer.till_next_boss_async()
     channel = client.get_channel(761151710097571862)
@@ -85,17 +86,17 @@ async def alert_hour():
     else:
         await channel.send(str(get_boss_time[0]) + ' in ' + str(get_boss_time[2]) + ' minutes.')
 
-@loop(minutes=5, count=2)
+@loop(minutes=5.0, count=3, reconnect=True)
 async def alert_min():
     get_boss_time = await boss_timer.till_next_boss_async()
     channel = client.get_channel(761151710097571862)
     await channel.send(str(get_boss_time[0]) + ' in ' + str(get_boss_time[2]) + ' minutes.')
 
-@loop(seconds=1, count=1)
+@loop(minutes=5.0, reconnect=True)
 async def alert_sec():
     get_boss_time = await boss_timer.till_next_boss_async()
     channel = client.get_channel(761151710097571862)
-    await channel.send(str(get_boss_time[0]) + ' in less than a minute.')
+    await channel.send(get_boss_time[0] + ' in 1 minute.')
 
 poll_boss_time.start()
 client.run(settings.DISCORD_TOKEN)
