@@ -48,7 +48,6 @@ async def on_message(message):
 @loop(seconds=30.0, reconnect=True)
 async def poll_boss_time():
     remaining_time = await boss_timer.till_next_boss_async()
-    remaining_time[1] = 0
 
     # Gracefully stops current tasks that aren't supposed to be running at certain time intervals
     if remaining_time[1] == 0 and remaining_time[2] <= 15 and alert_hour.is_running():
