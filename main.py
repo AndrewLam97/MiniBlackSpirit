@@ -9,6 +9,7 @@ from discord.ext.tasks import loop
 import input_parser
 import sanitizer
 import boss_timer
+from bdo_embed import *
 
 client = discord.Client()
 
@@ -42,6 +43,10 @@ async def on_message(message):
 
     if message.content.startswith('$enhance'):
         await message.channel.send(input_parser.parse_enhancement_sim(message.content))
+
+    if message.content.startswith('$tpoop'):
+        embed = BDOembed(message, "Black Spirit", "Hiya, I'm gonna be in you forever!", 0, ["Height", "Color", "Favorite food"], ["2'5\"", "Black", "Equipment"], "./assets/BlackSpiritChibi.jpg")
+        await embed.sendMessage()
 
     print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
 
